@@ -19,13 +19,29 @@ pub struct DelegationKeyThis {
 	permissions: Vec<String>,
 }
 
+///Since users have *two* Levelhead aliases (one random, one user-chosen), it's useful to be able to differentiate.
+///These are `levelhead` for user-chosen, and `levelhead-safe` for server-chosen aliases.
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="kebab-case")]
+pub enum AliasType {
+	Levelhead,
+	LevelheadSafe
+}
+
+//Specified at https://www.bscotch.net/api/docs/levelhead/#aliases-alias-reporting-post
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="camelCase")]
 pub struct Alias {
+	///Synonymous with "Rumpus Lookup Code".
 	user_id: String,
-	alias: String,
-	anonymous: bool,
-	context: String,
+	///Doesn't occur when anonymous
+	#[serde(rename="context")]
+	alias_type: Option<AliasType>,
+	///The player's username inside Levelhead. (Not set if the user does not have an alias.)
+	alias: Option<String>,
+	///If a player's username is not found, this field will exist and be set to `true`.
+	///This happens when a user has not yet played Levelhead, or if they've deleted their Rumpus account.
+	anonymous: Option<bool>,
 }
 
 type Stat = u32;
@@ -42,8 +58,11 @@ pub struct PlayerStats {
 	play_time: Stat,
 	crowns: Stat,
 	shoes: Stat,
+	#[serde(default)]
 	levels_played: Stat,
+	#[serde(default)]
 	wins: Stat,
+	#[serde(default)]
 	fails: Stat,
 	num_following: Stat,
 	///Shown in the example in the documentation, but not returned
@@ -66,7 +85,7 @@ pub struct PlayerStats {
 	#[serde(default)]
 	ach_points: Option<Stat>,
 	///Percentage how much of the campaign/training has been completed
-	#[serde(rename="CampaignProg")]
+	#[serde(rename="CampaignProg", default)]
 	campaign_progress: u8,
 }
 
