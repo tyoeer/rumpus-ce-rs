@@ -44,7 +44,8 @@ pub struct Alias {
 	anonymous: Option<bool>,
 }
 
-type Stat = u32;
+///Used for numbers with an unknown upper bound.
+pub type Stat = u32;
 
 //Values with #[serde(default)] are not present in the server response when 0
 #[derive(Serialize, Deserialize, Debug)]

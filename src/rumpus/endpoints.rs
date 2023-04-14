@@ -1,5 +1,6 @@
 use restson::*;
 use super::types::*;
+use super::query;
 
 impl RestPath<()> for Rumpus<DelegationKeyThis> {
 	fn get_path(_:()) -> Result<String, Error> {
@@ -8,8 +9,8 @@ impl RestPath<()> for Rumpus<DelegationKeyThis> {
 }
 
 //Not the full capabilities of this endpoint
-impl RestPath<&str> for Rumpus<Vec<Player>> {
-	fn get_path(user_code: &str) -> Result<String, Error> {
-		Ok(format!("levelhead/players?userIds={}", user_code))
+impl RestPath<query::PlayerSearch> for Rumpus<Vec<Player>> {
+	fn get_path(query: query::PlayerSearch) -> Result<String, Error> {
+		Ok(format!("levelhead/players?{}", query))
 	}
 }
