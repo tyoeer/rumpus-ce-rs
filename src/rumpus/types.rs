@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use restson::*;
 
 ///Wrapper for the generic response data all endpoints return
 #[derive(Serialize, Deserialize, Debug)]
@@ -18,11 +17,6 @@ pub struct DelegationKeyThis {
 	user_id: String,
 	pass_id: String,
 	permissions: Vec<String>,
-}
-impl RestPath<()> for Rumpus<DelegationKeyThis> {
-	fn get_path(_:()) -> Result<String, Error> {
-		Ok(String::from("delegation/keys/@this"))
-	}
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -81,10 +75,4 @@ pub struct Player {
 	updated_at: String,
 	interactions: Option<PlayerInteractions>,
 	stats: PlayerStats,
-}
-//Not the full capabilities of this endpoint
-impl RestPath<&str> for Rumpus<Vec<Player>> {
-	fn get_path(user_code: &str) -> Result<String, Error> {
-		Ok(format!("levelhead/players?userIds={}", user_code))
-	}
 }
