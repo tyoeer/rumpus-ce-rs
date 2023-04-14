@@ -29,11 +29,15 @@ pub struct Alias {
 }
 
 type Stat = u32;
+
+//Values with #[serde(default)] are not present in the server response when 0
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="PascalCase")]
 pub struct PlayerStats {
 	subscribers: Stat,
+	#[serde(default)]
 	published: Stat,
+	#[serde(default)]
 	plays: Stat,
 	play_time: Stat,
 	crowns: Stat,
@@ -45,17 +49,25 @@ pub struct PlayerStats {
 	///Shown in the example in the documentation, but not returned
 	d_b_comp: Option<Stat>,
 	///Tower trials completed, irregardless of if the time trophy was acquired
-	#[serde(rename="ChalWins")]
+	#[serde(rename="ChalWins", default)]
 	tower_trials: Stat,
 	///Tower trial time trophies acquired
+	#[serde(default)]
 	time_trophies: Stat,
+	#[serde(default)]
 	fave_gen: Stat,
+	#[serde(default)]
 	like_gen: Stat,
+	#[serde(default)]
 	bucks_tipped: Stat,
+	#[serde(default)]
 	tips_gotten: Stat,
 	///Shown in the example in the documentation, but not returned
+	#[serde(default)]
 	ach_points: Option<Stat>,
-	campaign_prog: Stat,
+	///Percentage how much of the campaign/training has been completed
+	#[serde(rename="CampaignProg")]
+	campaign_progress: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
