@@ -1,13 +1,15 @@
 use restson::*;
 
-pub mod rumpus;
-use rumpus::types::*;
-use rumpus::query::*;
+use rumpus_ce::{
+	types::*,
+	query::*,
+};
+
 
 const RUMPUS_URL: &str = "https://www.bscotch.net/api/";
 const API_KEY: &str = include_str!("../key.txt");
 
-#[tokio::main]
+#[tokio::test]
 async fn main() {
 	let mut client = RestClient::new(RUMPUS_URL).unwrap();
 	client.set_header("Rumpus-Delegation-Key", API_KEY).expect("api key is not a valid HTTP header");
