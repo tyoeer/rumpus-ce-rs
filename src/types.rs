@@ -45,7 +45,8 @@ pub struct Alias {
 }
 
 ///Used for numbers with an unknown upper bound.
-pub type Stat = u32;
+/// An i32 because https://lvlhd.co/@0ihetl managed to get -1 shoes
+pub type Stat = i32;
 
 //Values with #[serde(default)] are not present in the server response when 0
 #[derive(Serialize, Deserialize, Debug)]
