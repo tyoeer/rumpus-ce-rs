@@ -1,13 +1,65 @@
 use std::fmt;
 use super::types::Stat;
 
+pub enum SortProperty {
+	CreatedAt,
+	UpdatedAt,
+	Subscribers,
+	PlayTime,
+	Plays,
+	Trophies,
+	Shoes,
+	Crowns,
+	Published,
+}
+
+impl fmt::Display for SortProperty {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		use SortProperty::*;
+		match self {
+			CreatedAt => write!(f, "createdAt"),
+			UpdatedAt => write!(f, "updatedAt"),
+			Subscribers => write!(f, "Subscribers"),
+			PlayTime => write!(f, "PlayTime"),
+			Plays => write!(f, "Plays"),
+			Trophies => write!(f, "Trophies"),
+			Shoes => write!(f, "Shoes"),
+			Crowns => write!(f, "Crowns"),
+			Published => write!(f, "Published"),
+		}
+	}
+}
+
+pub struct PlayerSearchSort {
+	ascending: bool,
+	property: SortProperty,
+}
+
+impl PlayerSearchSort {
+	pub fn new(property: SortProperty, ascending: bool) -> Self {
+		Self {
+			property,
+			ascending,
+		}
+	}
+}
+impl fmt::Display for PlayerSearchSort {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		if self.ascending {
+			write!(f, "-")?;
+		}
+		
+		write!(f, "{}", self.property)
+	}
+}
+
 //Can't generate the struct with the macro because we want to include docs
 #[derive(Default)]
 pub struct PlayerSearch {
 	///The parameter you want to sort on.
 	///By default it returns results from largest to smallest: to inverse this just prefix with a -.
 	///Eg. sort=Subscribers vs. sort=-Subscribers.
-	sort: Option<String>,
+	sort: Option<PlayerSearchSort>,
 	///Maximum number of results to return. There is a hard limit of 64 (subject to change) – you’ll have to page to obtain additional results.
 	limit: Option<u8>,
 	///Up to 16 (subject to change) comma-separated userIds. If set, only Levels created by the users in this list will be returned.
@@ -41,7 +93,7 @@ pub struct PlayerSearch {
 
 macro_rules! player_search_parameters {
 	($callback:ident) => {
-		$callback!(sort, String, "sort");
+		$callback!(sort, PlayerSearchSort, "sort");
 		$callback!(limit, u8, "limit");
 		$callback!(user_ids, String, "userIds");
 		$callback!(max_subscribers, Stat, "maxSubscribers");
@@ -57,9 +109,10 @@ macro_rules! player_search_parameters {
 		$callback!(tiebreaker_item_id, String, "tiebreakerItemId", last);
 	}
 }
-macro_rules! format_parameter {
+macro_rules! setter {
+	(sort, $type:ty, $queryField:literal) => {};
 	($field:ident, $type:ty, $queryField:literal $(, last)?) => {
-		pub fn $field<V: Into<$type>>(mut self, value: V) -> Self {
+		pub fn $field(mut self, value: impl Into<$type>) -> Self {
 			self.$field = Some(value.into());
 			self
 		}
@@ -71,7 +124,12 @@ impl PlayerSearch {
 		Self::default()
 	}
 	
-	player_search_parameters!(format_parameter);
+	pub fn sort(mut self, property: SortProperty, ascending: bool) -> Self {
+		self.sort = Some(PlayerSearchSort::new(property, ascending));
+		self
+	}
+	
+	player_search_parameters!(setter);
 }
 
 impl fmt::Display for PlayerSearch {
@@ -113,8 +171,9 @@ mod tests {
 	fn simple_query_string_test() {
 		let q = PlayerSearch::new()
 			.limit(13)
-			.include_aliases(false);
+			.include_aliases(false)
+			.sort(SortProperty::CreatedAt, true);
 		
-		assert_eq!(format!("{}",q),"limit=13&includeAliases=false")
+		assert_eq!(format!("{}",q),"sort=-createdAt&limit=13&includeAliases=false")
 	}
 }
