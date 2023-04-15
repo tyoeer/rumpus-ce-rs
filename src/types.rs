@@ -33,15 +33,15 @@ pub enum AliasType {
 #[serde(rename_all="camelCase")]
 pub struct Alias {
 	///Synonymous with "Rumpus Lookup Code".
-	user_id: String,
+	pub user_id: String,
 	///Doesn't occur when anonymous
 	#[serde(rename="context")]
-	alias_type: Option<AliasType>,
+	pub alias_type: Option<AliasType>,
 	///The player's username inside Levelhead. (Not set if the user does not have an alias.)
-	alias: Option<String>,
+	pub alias: Option<String>,
 	///If a player's username is not found, this field will exist and be set to `true`.
 	///This happens when a user has not yet played Levelhead, or if they've deleted their Rumpus account.
-	anonymous: Option<bool>,
+	pub anonymous: Option<bool>,
 }
 
 ///Used for numbers with an unknown upper bound.
@@ -51,60 +51,60 @@ pub type Stat = u32;
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="PascalCase")]
 pub struct PlayerStats {
-	subscribers: Stat,
+	pub subscribers: Stat,
 	#[serde(default)]
-	published: Stat,
+	pub published: Stat,
 	#[serde(default)]
-	plays: Stat,
-	play_time: Stat,
-	crowns: Stat,
-	shoes: Stat,
+	pub plays: Stat,
+	pub play_time: Stat,
+	pub crowns: Stat,
+	pub shoes: Stat,
 	#[serde(default)]
-	levels_played: Stat,
+	pub levels_played: Stat,
 	#[serde(default)]
-	wins: Stat,
+	pub wins: Stat,
 	#[serde(default)]
-	fails: Stat,
-	num_following: Stat,
+	pub fails: Stat,
+	pub num_following: Stat,
 	///Shown in the example in the documentation, but not returned
-	d_b_comp: Option<Stat>,
+	pub d_b_comp: Option<Stat>,
 	///Tower trials completed, irregardless of if the time trophy was acquired
 	#[serde(rename="ChalWins", default)]
-	tower_trials: Stat,
+	pub tower_trials: Stat,
 	///Tower trial time trophies acquired
 	#[serde(default)]
-	time_trophies: Stat,
+	pub time_trophies: Stat,
 	#[serde(default)]
-	fave_gen: Stat,
+	pub fave_gen: Stat,
 	#[serde(default)]
-	like_gen: Stat,
+	pub like_gen: Stat,
 	#[serde(default)]
-	bucks_tipped: Stat,
+	pub bucks_tipped: Stat,
 	#[serde(default)]
-	tips_gotten: Stat,
+	pub tips_gotten: Stat,
 	///Shown in the example in the documentation, but not returned
 	#[serde(default)]
-	ach_points: Option<Stat>,
+	pub ach_points: Option<Stat>,
 	///Percentage how much of the campaign/training has been completed
 	#[serde(rename="CampaignProg", default)]
-	campaign_progress: u8,
+	pub campaign_progress: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="camelCase")]
 pub struct PlayerInteractions {
-	following: bool,
+	pub following: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="camelCase")]
 pub struct Player {
 	#[serde(rename="_id")]
-	id: String,
-	user_id: String,
-	alias: Option<Alias>,
-	created_at: String,
-	updated_at: String,
-	interactions: Option<PlayerInteractions>,
-	stats: PlayerStats,
+	pub id: String,
+	pub user_id: String,
+	pub alias: Option<Alias>,
+	pub created_at: String,
+	pub updated_at: String,
+	pub interactions: Option<PlayerInteractions>,
+	pub stats: PlayerStats,
 }
