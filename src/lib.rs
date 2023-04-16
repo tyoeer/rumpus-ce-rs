@@ -1,3 +1,7 @@
+///Typed structs for Rumpus data
 pub mod types;
-pub mod endpoints;
+///Stuff to handle parameters we send along
 pub mod query;
+
+///Restson restPath implementations
+pub mod endpoints;

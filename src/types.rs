@@ -29,6 +29,7 @@ pub enum AliasType {
 }
 
 //Specified at https://www.bscotch.net/api/docs/levelhead/#aliases-alias-reporting-post
+///A player's name
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="camelCase")]
 pub struct Alias {
@@ -44,14 +45,19 @@ pub struct Alias {
 	pub anonymous: Option<bool>,
 }
 
-///Used for numbers with an unknown upper bound.
-/// An i32 because https://lvlhd.co/@0ihetl managed to get -1 shoes
+/**
+Used for numbers with an unknown upper bound.
+
+An i32 because multiple players such as <https://lvlhd.co/@8mbjmz> managed to get -1 shoes and/or crowns
+*/
 pub type Stat = i32;
 
-//Values with #[serde(default)] are not present in the server response when 0
+///Various statistics about a player
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="PascalCase")]
 pub struct PlayerStats {
+	//Values with #[serde(default)] are not present in the server response when 0
+	
 	pub subscribers: Stat,
 	#[serde(default)]
 	pub published: Stat,
@@ -67,7 +73,6 @@ pub struct PlayerStats {
 	#[serde(default)]
 	pub fails: Stat,
 	pub num_following: Stat,
-	///Shown in the example in the documentation, but not returned
 	pub d_b_comp: Option<Stat>,
 	///Tower trials completed, irregardless of if the time trophy was acquired
 	#[serde(rename="ChalWins", default)]
