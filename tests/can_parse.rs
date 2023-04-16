@@ -59,7 +59,9 @@ async fn oldest() -> Result<(), Error> {
 #[tokio::test]
 async fn special() -> Result<(), Error> {
 	let search = PlayerSearch::new()
-		.user_ids("pg11x1,0ihetl")
+		.user_ids("0ihetl,8mbjmz,pg11x1")
+		//Make sure the return order is stable
+		.sort(SortProperty::CreatedAt, true)
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
@@ -68,10 +70,20 @@ async fn special() -> Result<(), Error> {
 	
 	// dbg!(&data);
 	
+	// This is the oldest one with -1 shoes
+	assert_eq!(data[0].user_id, "0ihetl");
+	assert_eq!(data[0].stats.shoes, -1);
+	
+	//This one also has a negative number of crowns, and DBComp/d_b_comp
+	assert_eq!(data[1].user_id, "8mbjmz");
+	assert_eq!(data[1].stats.shoes, -1);
+	assert_eq!(data[1].stats.crowns, -1);
+	assert_eq!(data[1].stats.d_b_comp, Some(3));
+	
 	//This one appears to have been deleted
-	assert_eq!(data[0].user_id, "pg11x1");
+	assert_eq!(data[2].user_id, "pg11x1");
 	assert!(matches!(
-		data[0].alias,
+		data[2].alias,
 		Some(Alias {
 			alias_type: None,
 			anonymous: Some(true),
@@ -79,12 +91,6 @@ async fn special() -> Result<(), Error> {
 			user_id: _
 		})
 	));
-	
-	// This one has -1 shoes
-	assert_eq!(data[1].user_id, "0ihetl");
-	assert_eq!(data[1].stats.shoes, -1);
-	
-	
 	
 	Ok(())
 }
