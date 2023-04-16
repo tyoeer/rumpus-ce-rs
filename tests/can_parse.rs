@@ -6,11 +6,10 @@ use rumpus_ce::{
 };
 
 
-const RUMPUS_URL: &str = "https://www.bscotch.net/api/";
 const API_KEY: &str = include_str!("../key.txt");
 
 fn client() -> RestClient {
-	let mut client = RestClient::new(RUMPUS_URL).expect("Rumpus url wasn't valid");
+	let mut client = RestClient::new(rumpus_ce::API_URL).expect("Rumpus url wasn't valid");
 	client.set_header("Rumpus-Delegation-Key", API_KEY).expect("api key is not a valid HTTP header");
 	client
 }
