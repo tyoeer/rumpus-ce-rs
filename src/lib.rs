@@ -4,4 +4,4 @@ pub mod types;
 pub mod query;
 
 ///Restson restPath implementations
-pub mod endpoints;
+mod endpoints;
