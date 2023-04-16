@@ -18,6 +18,6 @@ An attempt at a Rust client for Rumpus CE.
 
 - [Official TypeScript SDK/Example  client](https://github.com/bscotch/rumpus-ce)
 - [Rumpus CE landing page](https://www.bscotch.net/rumpus-ce)
-- [Rumpus CE docs](https://www.bscotch.net/rumpus-ce)
+- [Rumpus CE docs](https://www.bscotch.net/api/docs/community-edition/)
 - [Rumpus CE Levelhead docs](https://www.bscotch.net/api/docs/levelhead/)
 - [Level-Kit source](https://github.com/Radio-inactive/Levelhead-Web-Tools)
