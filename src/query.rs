@@ -1,5 +1,23 @@
 use std::fmt;
+use thiserror::Error;
 use super::types::Stat;
+
+#[derive(Error, Debug)]
+#[error("value/amount of items of {value} is larger than maximum {maximum}")]
+pub struct LimitError {
+	pub value: usize,
+	pub maximum: usize
+}
+
+impl LimitError {
+	fn new(value: usize, maximum: usize) -> Self {
+		Self {
+			value,
+			maximum,
+		}
+	}
+}
+
 
 pub enum SortProperty {
 	CreatedAt,
@@ -109,24 +127,39 @@ macro_rules! player_search_parameters {
 		$callback!(tiebreaker_item_id, String, "tiebreakerItemId", last);
 	}
 }
-macro_rules! setter {
-	(sort, $type:ty, $queryField:literal) => {};
-	($field:ident, $type:ty, $queryField:literal $(, last)?) => {
-		pub fn $field(mut self, value: impl Into<$type>) -> Self {
-			self.$field = Some(value.into());
-			self
-		}
-	};
-}
 
 impl PlayerSearch {
 	pub fn new() -> Self {
 		Self::default()
 	}
 	
+	pub const MAX_LIMIT: usize = 64;
+}
+
+macro_rules! setter {
+	(sort, $type:ty, $queryField:literal) => {};
+	(limit, $type:ty, $queryField:literal) => {};
+	($field:ident, $type:ty, $queryField:literal $(, last)?) => {
+		pub fn $field(mut self, $field: impl Into<$type>) -> Self {
+			self.$field = Some($field.into());
+			self
+		}
+	};
+}
+impl PlayerSearch {
 	pub fn sort(mut self, property: SortProperty, ascending: bool) -> Self {
 		self.sort = Some(PlayerSearchSort::new(property, ascending));
 		self
+	}
+	
+	///Maximum number of results to return. Returns an error
+	pub fn limit(mut self, limit: u8) ->Result<Self, LimitError> {
+		if limit as usize > Self::MAX_LIMIT {
+			Err(LimitError::new(limit as usize, Self::MAX_LIMIT))
+		} else {
+			self.limit = Some(limit);
+			Ok(self)
+		}
 	}
 	
 	player_search_parameters!(setter);
@@ -168,12 +201,14 @@ mod tests {
 	use super::*;
 	
 	#[test]	
-	fn simple_query_string_test() {
+	fn simple_query_string_test() -> Result<(), LimitError> {
 		let q = PlayerSearch::new()
-			.limit(13)
+			.limit(13)?
 			.include_aliases(false)
 			.sort(SortProperty::CreatedAt, true);
 		
-		assert_eq!(format!("{}",q),"sort=-createdAt&limit=13&includeAliases=false")
+		assert_eq!(format!("{}",q),"sort=-createdAt&limit=13&includeAliases=false");
+		
+		Ok(())
 	}
 }

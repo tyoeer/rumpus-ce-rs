@@ -1,10 +1,11 @@
-use restson::*;
+use restson::RestClient;
 
 use rumpus_ce::{
 	types::*,
 	query::*,
 };
 
+use anyhow::*;
 
 const API_KEY: &str = include_str!("../key.txt");
 
@@ -19,7 +20,7 @@ fn client() -> RestClient {
 async fn newest() -> Result<(), Error> {
 	let search = PlayerSearch::new()
 		.sort(SortProperty::CreatedAt, false)
-		.limit(16)
+		.limit(16)?
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
@@ -37,7 +38,7 @@ async fn newest() -> Result<(), Error> {
 async fn oldest() -> Result<(), Error> {
 	let search = PlayerSearch::new()
 		.sort(SortProperty::CreatedAt, true)
-		.limit(16)
+		.limit(16)?
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
