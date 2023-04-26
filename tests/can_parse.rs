@@ -15,13 +15,14 @@ fn client() -> RestClient {
 	client
 }
 
+///Test we can fetch & parse info about the current delegation key
 #[tokio::test]
 async fn this_key() {
 	let res = client().get::<_, Rumpus<DelegationKeyInfo>>(()).await;
 	assert!(matches!(res, Result::Ok(_)));
 }
 
-//Verify we can fetch and parse the newest 16 players
+///Verify we can fetch and parse the newest 16 players
 #[tokio::test]
 async fn newest() -> Result<(), Error> {
 	let search = PlayerSearch::new()
@@ -39,7 +40,7 @@ async fn newest() -> Result<(), Error> {
 	Ok(())
 }
 
-//Verify we can fetch and parse the oldest 16 players
+///Verify we can fetch and parse the oldest 16 players
 #[tokio::test]
 async fn oldest() -> Result<(), Error> {
 	let search = PlayerSearch::new()
@@ -61,7 +62,7 @@ async fn oldest() -> Result<(), Error> {
 	Ok(())
 }
 
-//Test that we can parse some special players, and that their special attributes still hold
+///Test that we can parse some special players, and that their special attributes still hold
 #[tokio::test]
 async fn special() -> Result<(), Error> {
 	let search = PlayerSearch::new()
