@@ -59,7 +59,7 @@ async fn oldest() -> Result<(), Error> {
 #[tokio::test]
 async fn special() -> Result<(), Error> {
 	let search = PlayerSearch::new()
-		.user_ids("0ihetl,8mbjmz,pg11x1")
+		.user_ids(vec!["0ihetl","8mbjmz","pg11x1"])?
 		//Make sure the return order is stable
 		.sort(SortProperty::CreatedAt, true)
 		.include_aliases(true)

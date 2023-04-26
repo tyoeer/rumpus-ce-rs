@@ -83,7 +83,7 @@ pub struct PlayerSearch {
 	///Maximum number of results to return. There is a hard limit of 64 (subject to change) – you’ll have to page to obtain additional results.
 	limit: Option<u8>,
 	///Up to 16 (subject to change) comma-separated userIds. If set, only Levels created by the users in this list will be returned.
-	user_ids: Option<String>,
+	user_ids: Option<Vec<String>>,
 	///Limit results to those with at most this many subscribers.
 	max_subscribers: Option<Stat>,
 	///Limit results to those with at least this many subscribers.
@@ -115,7 +115,7 @@ macro_rules! player_search_parameters {
 	($callback:ident) => {
 		$callback!(sort, PlayerSearchSort, "sort");
 		$callback!(limit, u8, "limit");
-		$callback!(user_ids, String, "userIds");
+		$callback!(user_ids, Vec<String>, "userIds");
 		$callback!(max_subscribers, Stat, "maxSubscribers");
 		$callback!(min_subscribers, Stat, "minSubscribers");
 		$callback!(max_play_time, Stat, "maxPlayTime");
@@ -136,11 +136,13 @@ impl PlayerSearch {
 	}
 	
 	pub const MAX_LIMIT: usize = 64;
+	pub const MAX_USERS: usize = 16;
 }
 
 macro_rules! setter {
 	(sort, $type:ty, $queryField:literal) => {};
 	(limit, $type:ty, $queryField:literal) => {};
+	(user_ids, $type:ty, $queryField:literal) => {};
 	($field:ident, $type:ty, $queryField:literal $(, last)?) => {
 		pub fn $field(mut self, $field: impl Into<$type>) -> Self {
 			self.$field = Some($field.into());
@@ -154,12 +156,23 @@ impl PlayerSearch {
 		self
 	}
 	
-	///Maximum number of results to return. Returns an error
-	pub fn limit(mut self, limit: u8) ->Result<Self, LimitError> {
+	///Maximum number of results to return. Returns an error if limit is higher than [Self::MAX_LIMIT]
+	pub fn limit(mut self, limit: u8) -> Result<Self, LimitError> {
 		if limit as usize > Self::MAX_LIMIT {
-			Err(LimitError::new(limit as usize, Self::MAX_LIMIT))
+			Err(LimitError::new(limit as usize , Self::MAX_LIMIT))
 		} else {
 			self.limit = Some(limit);
+			Ok(self)
+		}
+	}
+	
+	///Limit results to these user ids. Returns an error if the amount of users is higher than [Self::MAX_USERS]
+	pub fn user_ids<S: Into<String>, V: Into<Vec<S>>>(mut self, user_ids: V) -> Result<Self, LimitError> {
+		let user_ids = user_ids.into().into_iter().map(|s| s.into()).collect::<Vec<_>>();
+		if user_ids.len() > Self::MAX_USERS {
+			Err(LimitError::new(user_ids.len(), Self::MAX_USERS))
+		}else {
+			self.user_ids = Some(user_ids);
 			Ok(self)
 		}
 	}
@@ -172,6 +185,7 @@ impl fmt::Display for PlayerSearch {
 		let mut prev = false;
 		
 		macro_rules! format_parameter {
+			(user_ids, $type:ty, $queryField:literal) => {};
 			($field:ident, $_type:ty, $queryField:literal) => {
 				if let Some(v) = &self.$field {
 					if prev {
@@ -192,6 +206,16 @@ impl fmt::Display for PlayerSearch {
 			};
 		}
 		
+		if let Some(v) = &self.user_ids {
+			// if prev {
+			// 	write!(f, "&")?;
+			// }
+			write!(f, "userIds=")?;
+			for (i, code) in v.iter().enumerate() {
+				write!(f, "{}{}", if i!=0 {","} else {""}, code)?;
+			}
+			prev = true;
+		}
 		player_search_parameters!(format_parameter);
 		
 		Ok(())
@@ -205,11 +229,12 @@ mod tests {
 	#[test]	
 	fn simple_query_string_test() -> Result<(), LimitError> {
 		let q = PlayerSearch::new()
+			.user_ids(vec!["test", "someone", "m7n6j8"])?
 			.limit(13)?
 			.include_aliases(false)
 			.sort(SortProperty::CreatedAt, true);
 		
-		assert_eq!(format!("{}",q),"sort=-createdAt&limit=13&includeAliases=false");
+		assert_eq!(format!("{}",q),"userIds=test,someone,m7n6j8&sort=-createdAt&limit=13&includeAliases=false");
 		
 		Ok(())
 	}
