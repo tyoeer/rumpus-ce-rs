@@ -33,7 +33,7 @@ async fn newest() -> Result<(), Error> {
 	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
-	//Do something with the data to make sure the fetch & parse doesn't get optimised out
+	//Verify the API returned stuff that will have gotten parsed
 	assert_eq!(data.len(), 16);
 	
 	Ok(())
@@ -51,7 +51,7 @@ async fn oldest() -> Result<(), Error> {
 	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
-	//Do something with the data to make sure the fetch & parse doesn't get optimised out
+	//Verify the API returned stuff that will have gotten parsed
 	assert_eq!(data.len(), 16);
 	
 	// Might as well run some additional checks
