@@ -238,4 +238,20 @@ mod tests {
 		
 		Ok(())
 	}
+	
+	#[test]
+	fn limits_ok() {
+		let x = PlayerSearch::new().user_ids(vec!["test"; PlayerSearch::MAX_USERS]);
+		assert!(matches!(x, Result::Ok(_)));
+		let x = PlayerSearch::new().limit(PlayerSearch::MAX_LIMIT as u8);
+		assert!(matches!(x, Result::Ok(_)));
+	}
+	
+	#[test]
+	fn limits_err() {
+		let x = PlayerSearch::new().user_ids(vec!["test"; PlayerSearch::MAX_USERS+1]);
+		assert!(matches!(x, Result::Err(_)));
+		let x = PlayerSearch::new().limit((PlayerSearch::MAX_LIMIT + 1) as u8);
+		assert!(matches!(x, Result::Err(_)));
+	}
 }
