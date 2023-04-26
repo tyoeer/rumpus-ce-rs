@@ -15,6 +15,12 @@ fn client() -> RestClient {
 	client
 }
 
+#[tokio::test]
+async fn this_key() {
+	let res = client().get::<_, Rumpus<DelegationKeyInfo>>(()).await;
+	assert!(matches!(res, Result::Ok(_)));
+}
+
 //Verify we can fetch and parse the newest 16 players
 #[tokio::test]
 async fn newest() -> Result<(), Error> {
