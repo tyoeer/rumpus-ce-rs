@@ -13,7 +13,7 @@ pub struct Rumpus<D> {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="camelCase")]
-pub struct DelegationKeyThis {
+pub struct DelegationKeyInfo {
 	user_id: String,
 	pass_id: String,
 	permissions: Vec<String>,

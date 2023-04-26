@@ -2,7 +2,7 @@ use restson::*;
 use super::types::*;
 use super::query;
 
-impl RestPath<()> for Rumpus<DelegationKeyThis> {
+impl RestPath<()> for Rumpus<DelegationKeyInfo> {
 	fn get_path(_:()) -> Result<String, Error> {
 		Ok(String::from("delegation/keys/@this"))
 	}
