@@ -11,6 +11,7 @@ An attempt at a Rust client for Rumpus CE.
 - Tests
 - All endpoints
 - Properly handle the rate limit
+- Make sure everything that should derive things like Eq and Clone do so
 - Add (optional?) support for the undocumented fields
 - Use (optional?) caching
 
