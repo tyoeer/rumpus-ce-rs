@@ -12,6 +12,8 @@ See the RestPath implementations for the [types::Rumpus#trait-implementations] t
 pub mod types;
 ///Stuff to handle parameters we send along
 pub mod query;
+///Handles integrating the right URL and header with the rets client
+pub mod rest_client;
 
 ///Restson restPath implementations
 mod endpoints;
