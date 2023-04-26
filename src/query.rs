@@ -19,6 +19,7 @@ impl LimitError {
 }
 
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SortProperty {
 	CreatedAt,
 	UpdatedAt,
@@ -48,6 +49,7 @@ impl fmt::Display for SortProperty {
 	}
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSearchSort {
 	ascending: bool,
 	property: SortProperty,
@@ -72,7 +74,7 @@ impl fmt::Display for PlayerSearchSort {
 }
 
 //Can't generate the struct with the macro because we want to include docs
-#[derive(Default)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSearch {
 	///The parameter you want to sort on.
 	///By default it returns results from largest to smallest: to inverse this just prefix with a -.
