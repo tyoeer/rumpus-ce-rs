@@ -42,6 +42,7 @@ pub fn with_key_url(key: impl AsRef<str>, url: impl AsRef<str>) -> RestClient {
 		Result::Ok(c) => c,
 		Result::Err(restson::Error::UrlError) => panic!("hardcoded bscotch URL isn't a valid URL"),
 		Result::Err(restson::Error::InvalidValue) => panic!("api key is not a valid HTTP header"),
+		//Checked Restson 1.3.0 source, those 2 are the only errors that can be returned from what we're doing
 		Result::Err(_) => unreachable!(),
 	}
 }
