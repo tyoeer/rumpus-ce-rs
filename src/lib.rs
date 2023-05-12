@@ -7,6 +7,7 @@ It is build on [restson](https://crates.io/crates/restson), which is build on [h
 See the RestPath implementations for the [types::Rumpus#trait-implementations] type to see which endpoints you can currently use.
 
 */
+#![allow(clippy::tabs_in_doc_comments)]
 
 ///Typed structs for Rumpus data
 pub mod types;
