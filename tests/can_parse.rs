@@ -5,7 +5,7 @@ use rumpus_ce::{
 	query::*,
 };
 
-use anyhow::*;
+use anyhow::{Error, Result};
 
 const API_KEY: &str = include_str!("../key.txt");
 
@@ -96,6 +96,29 @@ async fn special() -> Result<(), Error> {
 			user_id: _
 		})
 	));
+	
+	Ok(())
+}
+
+///Verify we can fetch and parse some levels
+#[tokio::test]
+async fn levels() -> Result<(), Error> {
+	let res = client().get::<_, Rumpus<Vec<Level>>>(()).await;
+	let res = match res {
+		Ok(res) => res,
+		Err(e) => {
+			use restson::Error::*;
+			if let DeserializeParseError(e, s) = e {
+				eprintln!("{}", s);
+				return Err(e.into());
+			}
+			return Err(e.into());
+		}
+	};
+	let data = res.into_inner().data.expect("no data was returned");
+	
+	//Verify the API returned stuff that will have gotten parsed
+	assert_eq!(data.len(), 10);
 	
 	Ok(())
 }

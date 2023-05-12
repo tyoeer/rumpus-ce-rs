@@ -114,3 +114,88 @@ pub struct Player {
 	pub interactions: Option<PlayerInteractions>,
 	pub stats: PlayerStats,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="camelCase")]
+pub struct Record {
+	user_id: String,
+	alias: Alias,
+	value: Stat,
+	created_at: String,
+}
+
+///Indicator how much objects of certain categories this level has
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="PascalCase")]
+pub struct LevelContents {
+	pub world: Stat,
+	pub movement: Stat,
+	pub puzzles: Stat,
+	pub enemies: Stat,
+	pub hazards: Stat,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="PascalCase")]
+pub struct LevelStats {
+	pub attempts: Stat,
+	pub favorites: Stat,
+	pub likes: Stat,
+	pub perk_points: Stat,
+	pub play_time: Stat,
+	pub players: Stat,
+	pub replay_value: Stat,
+	pub clear_rate: f32,
+	///Difficulty diamonds. 6 for uncleared.
+	//TODO: THis would probably be better as an enum
+	pub diamonds: u8,
+	pub successes: Stat,
+	pub time_per_win: f32,
+	pub exposure_bucks: Stat,
+	pub failure_rate: f32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="PascalCase")]
+pub struct LevelRecords {
+	high_score: Vec<Record>,
+	fastest_time: Vec<Record>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LevelInteractions {
+	pub bookmarked: bool,
+	pub liked: bool,
+	pub favorited: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all="camelCase")]
+pub struct Level {
+	#[serde(rename="_id")]
+	pub id: String,
+	///Content version? Some notes are collected at (https://github.com/tyoeer/Chaoshead/issues/22)
+	pub cv: Stat,
+	pub level_id: String,
+	pub user_id: String,
+	pub alias: Option<Alias>,
+	pub avatar_id: String,
+	pub title: String,
+	pub locale_id: Stat,
+	pub locale: String,
+	pub created_at: String,
+	pub updated_at: String,
+	pub tower: Option<bool>,
+	pub daily_build: Option<bool>,
+	pub tower_trial: bool,
+	pub required_players: u8,
+	///In seconds. Appears to have 2 significant decimals.
+	pub creator_time: f32,
+	pub game_version: Option<String>,
+	pub tags: Vec<String>,
+	pub tag_names: Vec<String>,
+	pub content: LevelContents,
+	pub stats: Option<LevelStats>,
+	pub records: Option<LevelRecords>,
+	pub interactions: Option<LevelInteractions>,
+}

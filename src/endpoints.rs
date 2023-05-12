@@ -8,9 +8,14 @@ impl RestPath<()> for Rumpus<DelegationKeyInfo> {
 	}
 }
 
-//Not the full capabilities of this endpoint
 impl RestPath<query::PlayerSearch> for Rumpus<Vec<Player>> {
 	fn get_path(query: query::PlayerSearch) -> Result<String, Error> {
 		Ok(format!("levelhead/players?{}", query))
+	}
+}
+
+impl RestPath<()> for Rumpus<Vec<Level>> {
+	fn get_path(_query: ()) -> Result<String, Error> {
+		Ok(String::from("levelhead/levels"))
 	}
 }
