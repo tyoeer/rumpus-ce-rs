@@ -14,8 +14,8 @@ impl RestPath<query::PlayerSearch> for Rumpus<Vec<Player>> {
 	}
 }
 
-impl RestPath<()> for Rumpus<Vec<Level>> {
-	fn get_path(_query: ()) -> Result<String, Error> {
-		Ok(String::from("levelhead/levels"))
+impl RestPath<query::LevelSearch> for Rumpus<Vec<Level>> {
+	fn get_path(query: query::LevelSearch) -> Result<String, Error> {
+		Ok(format!("levelhead/levels?{}", query))
 	}
 }

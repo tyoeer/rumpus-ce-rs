@@ -124,25 +124,46 @@ async fn special() -> Result<(), Error> {
 	Ok(())
 }
 
-///Verify we can fetch and parse some levels
+///Verify we can fetch and parse the newest levels
 #[tokio::test]
-async fn levels() -> Result<(), Error> {
-	let res = client().get::<_, Rumpus<Vec<Level>>>(()).await;
-	let res = match res {
-		Ok(res) => res,
-		Err(e) => {
-			use restson::Error::*;
-			if let DeserializeParseError(e, s) = e {
-				eprintln!("{}", s);
-				return Err(e.into());
-			}
-			return Err(e.into());
-		}
-	};
+async fn newest_levels() -> Result<(), Error> {
+	let search = LevelSearch::new()
+		.include_aliases(true)
+		.include_beta(true)
+		.include_my_interactions(true)
+		.include_records(true)
+		.include_stats(true)
+		.limit(64)?
+		.sort(LevelSortProperty::CreatedAt, false);
+	
+	let res = client().get::<_, Rumpus<Vec<Level>>>(search).await;
+	let res = err_info(res)?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
 	//Verify the API returned stuff that will have gotten parsed
-	assert_eq!(data.len(), 10);
+	assert_eq!(data.len(), 64);
+	
+	Ok(())
+}
+
+///Verify we can fetch and parse the newest levels
+#[tokio::test]
+async fn oldest_levels() -> Result<(), Error> {
+	let search = LevelSearch::new()
+		.include_aliases(true)
+		.include_beta(true)
+		.include_my_interactions(true)
+		.include_records(true)
+		.include_stats(true)
+		.limit(64)?
+		.sort(LevelSortProperty::CreatedAt, true);
+	
+	let res = client().get::<_, Rumpus<Vec<Level>>>(search).await;
+	let res = err_info(res)?;
+	let data = res.into_inner().data.expect("no data was returned");
+	
+	//Verify the API returned stuff that will have gotten parsed
+	assert_eq!(data.len(), 64);
 	
 	Ok(())
 }

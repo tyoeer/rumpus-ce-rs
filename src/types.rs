@@ -120,7 +120,7 @@ pub struct Player {
 pub struct Record {
 	user_id: String,
 	alias: Alias,
-	value: Stat,
+	value: f32,
 	created_at: String,
 }
 
@@ -138,19 +138,27 @@ pub struct LevelContents {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all="PascalCase")]
 pub struct LevelStats {
+	#[serde(default)]
 	pub attempts: Stat,
+	#[serde(default)]
 	pub favorites: Stat,
+	#[serde(default)]
 	pub likes: Stat,
-	pub perk_points: Stat,
+	pub perk_points: Option<Stat>,
+	#[serde(default)]
 	pub play_time: Stat,
+	#[serde(default)]
 	pub players: Stat,
+	#[serde(default)]
 	pub replay_value: Stat,
 	pub clear_rate: f32,
 	///Difficulty diamonds. 6 for uncleared.
 	//TODO: THis would probably be better as an enum
 	pub diamonds: u8,
+	#[serde(default)]
 	pub successes: Stat,
 	pub time_per_win: f32,
+	#[serde(default)]
 	pub exposure_bucks: Stat,
 	pub failure_rate: f32,
 }
@@ -162,7 +170,8 @@ pub struct LevelRecords {
 	fastest_time: Vec<Record>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(default)]
 pub struct LevelInteractions {
 	pub bookmarked: bool,
 	pub liked: bool,
