@@ -13,10 +13,31 @@ fn client() -> RestClient {
 	rumpus_ce::rest_client::with_key(API_KEY)
 }
 
+fn err_info<R>(res: Result<R, restson::Error>) -> Result<R, restson::Error> {
+	match res {
+		Ok(res) => Ok(res),
+		Err(err) => {
+			use restson::Error::*;
+			if let DeserializeParseError(ref e, ref s) = err {
+				assert_eq!(e.line(), 1);
+				let col = e.column();
+				let mut char_i = s.char_indices();
+				let from = char_i.nth(col.saturating_sub(40)).expect("column not in string").0;
+				let to = char_i.nth(80).unwrap_or_else( ||
+					s.char_indices().last().expect("string didn't have characters")
+				).0;
+				eprintln!("{}", &s[from..to]);
+			}
+			Err(err)
+		}
+	}
+}
+
 ///Test we can fetch & parse info about the current delegation key
 #[tokio::test]
 async fn this_key() {
 	let res = client().get::<_, Rumpus<DelegationKeyInfo>>(()).await;
+	let res = err_info(res);
 	assert!(matches!(res, Result::Ok(_)));
 }
 
@@ -29,7 +50,8 @@ async fn newest() -> Result<(), Error> {
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
-	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await?;
+	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await;
+	let res = err_info(res)?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
 	//Verify the API returned stuff that will have gotten parsed
@@ -47,7 +69,8 @@ async fn oldest() -> Result<(), Error> {
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
-	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await?;
+	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await;
+	let res = err_info(res)?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
 	//Verify the API returned stuff that will have gotten parsed
@@ -70,7 +93,8 @@ async fn special() -> Result<(), Error> {
 		.include_aliases(true)
 		.include_my_interactions(true);
 	
-	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await?;
+	let res = client().get::<_, Rumpus<Vec<Player>>>(search).await;
+	let res = err_info(res)?;
 	let data = res.into_inner().data.expect("no data was returned");
 	
 	// dbg!(&data);
