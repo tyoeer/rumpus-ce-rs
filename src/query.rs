@@ -20,7 +20,7 @@ impl LimitError {
 
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SortProperty {
+pub enum PlayerSortProperty {
 	CreatedAt,
 	UpdatedAt,
 	Subscribers,
@@ -32,9 +32,9 @@ pub enum SortProperty {
 	Published,
 }
 
-impl fmt::Display for SortProperty {
+impl fmt::Display for PlayerSortProperty {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		use SortProperty::*;
+		use PlayerSortProperty::*;
 		match self {
 			CreatedAt => write!(f, "createdAt"),
 			UpdatedAt => write!(f, "updatedAt"),
@@ -52,11 +52,11 @@ impl fmt::Display for SortProperty {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSearchSort {
 	ascending: bool,
-	property: SortProperty,
+	property: PlayerSortProperty,
 }
 
 impl PlayerSearchSort {
-	pub fn new(property: SortProperty, ascending: bool) -> Self {
+	pub fn new(property: PlayerSortProperty, ascending: bool) -> Self {
 		Self {
 			property,
 			ascending,
@@ -151,7 +151,7 @@ macro_rules! setter {
 	};
 }
 impl PlayerSearch {
-	pub fn sort(mut self, property: SortProperty, ascending: bool) -> Self {
+	pub fn sort(mut self, property: PlayerSortProperty, ascending: bool) -> Self {
 		self.sort = Some(PlayerSearchSort::new(property, ascending));
 		self
 	}
@@ -232,7 +232,7 @@ mod tests {
 			.user_ids(vec!["test", "someone", "m7n6j8"])?
 			.limit(13)?
 			.include_aliases(false)
-			.sort(SortProperty::CreatedAt, true);
+			.sort(PlayerSortProperty::CreatedAt, true);
 		
 		assert_eq!(format!("{}",q),"userIds=test,someone,m7n6j8&sort=-createdAt&limit=13&includeAliases=false");
 		
