@@ -20,6 +20,32 @@ impl LimitError {
 
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Sort<P: fmt::Display> {
+	ascending: bool,
+	property: P,
+}
+
+impl<P: fmt::Display> Sort<P> {
+	pub fn new(property: P, ascending: bool) -> Self {
+		Self {
+			property,
+			ascending,
+		}
+	}
+}
+impl<P: fmt::Display> fmt::Display for Sort<P> {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		if self.ascending {
+			write!(f, "-")?;
+		}
+		
+		write!(f, "{}", self.property)
+	}
+}
+
+
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerSortProperty {
 	CreatedAt,
 	UpdatedAt,
@@ -49,29 +75,7 @@ impl fmt::Display for PlayerSortProperty {
 	}
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PlayerSearchSort {
-	ascending: bool,
-	property: PlayerSortProperty,
-}
-
-impl PlayerSearchSort {
-	pub fn new(property: PlayerSortProperty, ascending: bool) -> Self {
-		Self {
-			property,
-			ascending,
-		}
-	}
-}
-impl fmt::Display for PlayerSearchSort {
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		if self.ascending {
-			write!(f, "-")?;
-		}
-		
-		write!(f, "{}", self.property)
-	}
-}
+pub type PlayerSearchSort = Sort<PlayerSortProperty>;
 
 //Can't generate the struct with the macro because we want to include docs
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
