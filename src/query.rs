@@ -80,39 +80,37 @@ pub type PlayerSearchSort = Sort<PlayerSortProperty>;
 //Can't generate the struct with the macro because we want to include docs
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct PlayerSearch {
-	///The parameter you want to sort on.
-	///By default it returns results from largest to smallest: to inverse this just prefix with a -.
-	///Eg. sort=Subscribers vs. sort=-Subscribers.
-	sort: Option<PlayerSearchSort>,
-	///Maximum number of results to return. There is a hard limit of 64 (subject to change) – you’ll have to page to obtain additional results.
-	limit: Option<u8>,
+	///The parameter you want to sort on. By default it returns results from largest to smallest.
+	pub sort: Option<PlayerSearchSort>,
+	///Maximum number of results to return. There is a hard limit of [Self::MAX_LIMIT] (subject to change) – you’ll have to page to obtain additional results.
+	pub limit: Option<u8>,
 	///Up to 16 (subject to change) comma-separated userIds. If set, only Levels created by the users in this list will be returned.
-	user_ids: Option<Vec<String>>,
+	pub user_ids: Option<Vec<String>>,
 	///Limit results to those with at most this many subscribers.
-	max_subscribers: Option<Stat>,
+	pub max_subscribers: Option<Stat>,
 	///Limit results to those with at least this many subscribers.
-	min_subscribers: Option<Stat>,
+	pub min_subscribers: Option<Stat>,
 	///Limit results to those with at most this many seconds of playtime.
-	max_play_time: Option<Stat>,
+	pub max_play_time: Option<Stat>,
 	///Limit results to those with at least this many seconds of playtime.
-	min_play_time: Option<Stat>,
+	pub min_play_time: Option<Stat>,
 	///Return profiles created at or after this date. Must be parsable by Javascript `new Date()`.
-	min_created_at: Option<Stat>,
+	pub min_created_at: Option<Stat>,
 	///Return profiles created at or before this date. Must be parsable by Javascript `new Date()`.
-	max_created_at: Option<Stat>,
+	pub max_created_at: Option<Stat>,
 	///Return profiles updated at or after this date. Must be parsable by Javascript `new Date()`.
-	min_updated_at: Option<Stat>,
+	pub min_updated_at: Option<Stat>,
 	///Return profiles updated at or before this date. Must be parsable by Javascript `new Date()`.
-	max_updated_at: Option<Stat>,
+	pub max_updated_at: Option<Stat>,
 	///If true, will add the alias field to the profile.
 	///This prevents the need for additional requests to find aliases, but you should only set this if you will be using/displaying all returned aliases!
-	include_aliases: Option<bool>,
+	pub include_aliases: Option<bool>,
 	///If true, information about your interactions with returned users (e.g. “following”) will be included in the response.
-	include_my_interactions: Option<bool>,
+	pub include_my_interactions: Option<bool>,
 	///If sorting based on a value that can contain ties, subsequent pages will contain repeated results on ties.
 	///Results are secondarily sorted on the _id field: if you provide the _id of the last result from your prior search
 	/// in this field you will be able to page results even when there are ties.
-	tiebreaker_item_id: Option<String>,
+	pub tiebreaker_item_id: Option<String>,
 }
 
 macro_rules! player_search_parameters {
