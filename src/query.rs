@@ -103,13 +103,13 @@ pub struct PlayerSearch {
 	///Limit results to those with at least this many seconds of playtime.
 	pub min_play_time: Option<Stat>,
 	///Return profiles created at or after this date. Must be parsable by Javascript `new Date()`.
-	pub min_created_at: Option<Stat>,
+	pub min_created_at: Option<String>,
 	///Return profiles created at or before this date. Must be parsable by Javascript `new Date()`.
-	pub max_created_at: Option<Stat>,
+	pub max_created_at: Option<String>,
 	///Return profiles updated at or after this date. Must be parsable by Javascript `new Date()`.
-	pub min_updated_at: Option<Stat>,
+	pub min_updated_at: Option<String>,
 	///Return profiles updated at or before this date. Must be parsable by Javascript `new Date()`.
-	pub max_updated_at: Option<Stat>,
+	pub max_updated_at: Option<String>,
 	///If true, will add the alias field to the profile.
 	///This prevents the need for additional requests to find aliases, but you should only set this if you will be using/displaying all returned aliases!
 	pub include_aliases: Option<bool>,
@@ -130,10 +130,10 @@ macro_rules! player_search_parameters {
 		$callback!(min_subscribers, Stat, "minSubscribers");
 		$callback!(max_play_time, Stat, "maxPlayTime");
 		$callback!(min_play_time, Stat, "minPlayTime");
-		$callback!(min_created_at, Stat, "minCreatedAt");
-		$callback!(max_created_at, Stat, "maxCreatedAt");
-		$callback!(min_updated_at, Stat, "minUpdatedAt");
-		$callback!(max_updated_at, Stat, "maxUpdatedAt");
+		$callback!(min_created_at, String, "minCreatedAt");
+		$callback!(max_created_at, String, "maxCreatedAt");
+		$callback!(min_updated_at, String, "minUpdatedAt");
+		$callback!(max_updated_at, String, "maxUpdatedAt");
 		$callback!(include_aliases, bool, "includeAliases");
 		$callback!(include_my_interactions, bool, "includeMyInteractions");
 		$callback!(tiebreaker_item_id, String, "tiebreakerItemId", last);
