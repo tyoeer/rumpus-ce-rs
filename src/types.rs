@@ -174,7 +174,7 @@ pub struct LevelInteractions {
 pub struct Level {
 	#[serde(rename="_id")]
 	pub id: String,
-	///Content version? Some notes are collected at (https://github.com/tyoeer/Chaoshead/issues/22)
+	///Content version? Some notes are collected at <https://github.com/tyoeer/Chaoshead/issues/22>
 	pub cv: Stat,
 	pub level_id: String,
 	pub user_id: String,
