@@ -8,6 +8,11 @@ An attempt at a Rust client for Rumpus CE.
 	- Figure out what types to use for the top-level Rumpus struct (e.g. figure out when the meta and errors field appear)
 	- Alias .alias_type(/.context) and .anonymous appear to be mutually exclusive and can probably be combined into a single field
 	- Handle datetimes
+	- Different parameters of the LevelSearch query only work on certain search types (daily/tower/marketing).
+	  It might be nice to split the query to represent that.
+	- Better names:
+		- ReplayValue = Spice
+		- HiddenGem = Featured page in the tower
 - Tests
 - All endpoints
 - Properly handle the rate limit
