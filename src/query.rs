@@ -43,7 +43,15 @@ impl<P: fmt::Display> fmt::Display for Sort<P> {
 	}
 }
 
-
+macro_rules! setter {
+	($field:ident, $type:ty, $queryField:literal, customSetter $(, $_:tt)?) => {};
+	($field:ident, $type:ty, $queryField:literal $(, $_:tt)? ) => {
+		pub fn $field(mut self, $field: impl Into<$type>) -> Self {
+			self.$field = Some($field.into());
+			self
+		}
+	};
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PlayerSortProperty {
@@ -115,9 +123,9 @@ pub struct PlayerSearch {
 
 macro_rules! player_search_parameters {
 	($callback:ident) => {
-		$callback!(sort, PlayerSearchSort, "sort");
-		$callback!(limit, u8, "limit");
-		$callback!(user_ids, Vec<String>, "userIds");
+		$callback!(sort, PlayerSearchSort, "sort", customSetter);
+		$callback!(limit, u8, "limit", customSetter);
+		$callback!(user_ids, Vec<String>, "userIds", customSetter);
 		$callback!(max_subscribers, Stat, "maxSubscribers");
 		$callback!(min_subscribers, Stat, "minSubscribers");
 		$callback!(max_play_time, Stat, "maxPlayTime");
@@ -141,17 +149,6 @@ impl PlayerSearch {
 	pub const MAX_USERS: usize = 16;
 }
 
-macro_rules! setter {
-	(sort, $type:ty, $queryField:literal) => {};
-	(limit, $type:ty, $queryField:literal) => {};
-	(user_ids, $type:ty, $queryField:literal) => {};
-	($field:ident, $type:ty, $queryField:literal $(, last)?) => {
-		pub fn $field(mut self, $field: impl Into<$type>) -> Self {
-			self.$field = Some($field.into());
-			self
-		}
-	};
-}
 impl PlayerSearch {
 	pub fn sort(mut self, property: PlayerSortProperty, ascending: bool) -> Self {
 		self.sort = Some(PlayerSearchSort::new(property, ascending));
@@ -186,17 +183,9 @@ impl fmt::Display for PlayerSearch {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		let mut prev = false;
 		
+		//Can't put in outside scope because of macro hygiene and self & prev
 		macro_rules! format_parameter {
-			(user_ids, $type:ty, $queryField:literal) => {};
-			($field:ident, $_type:ty, $queryField:literal) => {
-				if let Some(v) = &self.$field {
-					if prev {
-						write!(f, "&")?;
-					}
-					write!(f, "{}={}", $queryField,v)?;
-					prev = true;
-				}
-			};
+			($field:ident, Vec<$type:ty>, $queryField:literal $(, $_:tt)?) => {};
 			($field:ident, $_type:ty, $queryField:literal, last) => {
 				if let Some(v) = &self.$field {
 					if prev {
@@ -204,6 +193,15 @@ impl fmt::Display for PlayerSearch {
 					}
 					write!(f, "{}={}", $queryField,v)?;
 					//prev = true;
+				}
+			};
+			($field:ident, $_type:ty, $queryField:literal $(, $_:tt)?) => {
+				if let Some(v) = &self.$field {
+					if prev {
+						write!(f, "&")?;
+					}
+					write!(f, "{}={}", $queryField,v)?;
+					prev = true;
 				}
 			};
 		}
@@ -218,6 +216,7 @@ impl fmt::Display for PlayerSearch {
 			}
 			prev = true;
 		}
+		
 		player_search_parameters!(format_parameter);
 		
 		Ok(())
