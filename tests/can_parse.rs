@@ -87,7 +87,7 @@ async fn oldest() -> Result<(), Error> {
 #[tokio::test]
 async fn special() -> Result<(), Error> {
 	let search = PlayerSearch::new()
-		.user_ids(vec!["0ihetl","8mbjmz","pg11x1"])?
+		.user_ids(vec!["0ihetl","8mbjmz","pg11x1","bscotch246"])?
 		//Make sure the return order is stable
 		.sort(PlayerSortProperty::CreatedAt, true)
 		.include_aliases(true)
@@ -99,20 +99,29 @@ async fn special() -> Result<(), Error> {
 	
 	// dbg!(&data);
 	
+	let mut i = 0;
+	
 	// This is the oldest one with -1 shoes
-	assert_eq!(data[0].user_id, "0ihetl");
-	assert_eq!(data[0].stats.shoes, -1);
+	assert_eq!(data[i].user_id, "0ihetl");
+	assert_eq!(data[i].stats.shoes, -1);
+	i+=1;
+	
+	//This one has -2 published levels	
+	assert_eq!(data[i].user_id, "bscotch246");
+	assert_eq!(data[i].stats.published, -2);
+	i+=1;
 	
 	//This one also has a negative number of crowns, and DBComp/d_b_comp
-	assert_eq!(data[1].user_id, "8mbjmz");
-	assert_eq!(data[1].stats.shoes, -1);
-	assert_eq!(data[1].stats.crowns, -1);
-	assert_eq!(data[1].stats.d_b_comp, Some(3));
+	assert_eq!(data[i].user_id, "8mbjmz");
+	assert_eq!(data[i].stats.shoes, -1);
+	assert_eq!(data[i].stats.crowns, -1);
+	assert_eq!(data[i].stats.d_b_comp, Some(3));
+	i+=1;
 	
 	//This one appears to have been deleted
-	assert_eq!(data[2].user_id, "pg11x1");
+	assert_eq!(data[i].user_id, "pg11x1");
 	assert!(matches!(
-		data[2].alias,
+		data[i].alias,
 		Some(Alias {
 			alias_type: None,
 			anonymous: Some(true),
