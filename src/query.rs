@@ -141,12 +141,12 @@ macro_rules! player_search_parameters {
 }
 
 impl PlayerSearch {
+	pub const MAX_LIMIT: usize = 64;
+	pub const MAX_USERS: usize = 16;
+	
 	pub fn new() -> Self {
 		Self::default()
 	}
-	
-	pub const MAX_LIMIT: usize = 64;
-	pub const MAX_USERS: usize = 16;
 }
 
 impl PlayerSearch {
@@ -380,13 +380,14 @@ macro_rules! level_search_parameters {
 }
 
 impl LevelSearch {
+	pub const MAX_LIMIT: usize = 64;
+	pub const MAX_USERS: usize = 16;
+	pub const MAX_LEVELS: usize = 16;
+	
 	pub fn new() -> Self {
 		Self::default()
 	}
 	
-	pub const MAX_LIMIT: usize = 64;
-	pub const MAX_USERS: usize = 16;
-	pub const MAX_LEVELS: usize = 16;
 }
 
 impl LevelSearch {
