@@ -18,6 +18,33 @@ impl LimitError {
 	}
 }
 
+#[derive(Error,Debug)]
+pub enum PageError {
+	#[error("can't page an unsorted search")]
+	MissingSort,
+	#[error("can't page without the {field} statistic")]
+	MissingStats {
+		field: &'static str,
+	},
+	#[error("can't page {field} without the undocumented feature")]
+	RequiresUndocumented {
+		field: &'static str,
+	},
+}
+
+impl PageError {
+	pub fn sort() -> Self {
+		Self::MissingSort
+	}
+	
+	pub fn stat(field: &'static str) -> Self {
+		Self::MissingStats { field }
+	}
+	
+	pub fn undocumented(field: &'static str) -> Self {
+		Self::RequiresUndocumented { field }
+	}
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Sort<P: fmt::Display> {
@@ -53,7 +80,7 @@ macro_rules! setter {
 	};
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PlayerSortProperty {
 	CreatedAt,
 	UpdatedAt,
@@ -226,7 +253,7 @@ impl fmt::Display for PlayerSearch {
 
 
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LevelSortProperty {
 	CreatedAt,
 	PlayTime,
@@ -388,6 +415,60 @@ impl LevelSearch {
 		Self::default()
 	}
 	
+	pub fn page_after(mut self, after: &super::types::Level) -> Result<Self,PageError> {
+		let Some(ref sort) = self.sort else {
+			return Err(PageError::sort());
+		};
+		
+		self.tiebreaker_item_id = Some(after.id.clone());
+		
+		//ascending => we start low => we change the lowest/minimum
+		let this = match (sort.property, sort.ascending) {
+			(LevelSortProperty::CreatedAt, true) => self.min_created_at(after.created_at.clone()),
+			(LevelSortProperty::CreatedAt, false) => self.max_created_at(after.created_at.clone()),
+			(LevelSortProperty::PlayTime, asc) => {
+				let stats = after.stats.as_ref().ok_or(PageError::stat("play_time"))?;
+				if asc {
+					self.min_play_time(stats.play_time)
+				} else {
+					self.max_play_time(stats.play_time)
+				}
+			},
+			(LevelSortProperty::ReplayValue, asc) => {
+				let stats = after.stats.as_ref().ok_or(PageError::stat("replay_value"))?;
+				if asc {
+					self.min_replay_value(stats.replay_value)
+				} else {
+					self.max_replay_value(stats.replay_value)
+				}
+			},
+			(LevelSortProperty::ExposureBucks, asc) => {
+				let stats = after.stats.as_ref().ok_or(PageError::stat("exposure_bucks"))?;
+				if asc {
+					self.min_exposure_bucks(stats.exposure_bucks)
+				} else {
+					self.max_exposure_bucks(stats.exposure_bucks)
+				}
+			},
+			(LevelSortProperty::HiddenGem, asc) => {
+				#[cfg(feature="undocumented")]
+				{
+					let stats = after.stats.as_ref().ok_or(PageError::stat("hidden_gem"))?;
+					if asc {
+						self.min_hidden_gem(stats.hidden_gem)
+					} else {
+						self.max_hidden_gem(stats.hidden_gem)
+					}
+				}
+				#[cfg(not(feature="undocumented"))]
+				{
+					return Err(PageError::undocumented("hidden_gem"));
+				}
+			},
+		};
+		
+		Ok(this)
+	}
 }
 
 impl LevelSearch {
