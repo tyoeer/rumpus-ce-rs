@@ -161,6 +161,9 @@ pub struct LevelStats {
 	#[serde(default)]
 	pub exposure_bucks: Stat,
 	pub failure_rate: f32,
+	
+	#[cfg(feature="undocumented")]
+	pub hidden_gem: Stat,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

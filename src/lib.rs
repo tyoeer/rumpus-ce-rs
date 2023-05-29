@@ -6,6 +6,9 @@ It is build on [restson](https://crates.io/crates/restson), which is build on [h
 
 See the RestPath implementations for the [types::Rumpus#trait-implementations] type to see which endpoints you can currently use.
 
+It provides some support for undocumented data through the `undocumented` feature, which is enabled by default.
+It can be turned off in case Rumpus CE makes some changes to it's undocumented parts.
+
 */
 #![allow(clippy::tabs_in_doc_comments)]
 
