@@ -231,9 +231,8 @@ pub enum LevelSortProperty {
 	CreatedAt,
 	PlayTime,
 	ReplayValue,
+	///Also has synonym QAScore
 	ExposureBucks,
-	///Synonym of “ExposureBucks”
-	QAScore,
 	///Synonymous with the “Featured” list in-game. Is the default and can be used for Tower levels.
 	HiddenGem,
 }
@@ -246,7 +245,6 @@ impl fmt::Display for LevelSortProperty {
 			PlayTime => write!(f, "PlayTime"),
 			ReplayValue => write!(f, "ReplayValue"),
 			ExposureBucks => write!(f, "ExposureBucks"),
-			QAScore => write!(f, "QAScore"),
 			HiddenGem => write!(f, "HiddenGem"),
 		}
 	}
